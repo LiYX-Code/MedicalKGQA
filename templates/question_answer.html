@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>医疗问答系统</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='custom.css')}}">
+</head>
+
+<body>
+    <div class="nav-bar">
+        <div class="container">
+            <div class="row flex align-items-center">
+                <div class="col-9 col-lg-3">
+                    <div class="site-branding">
+                        <h2 class="site-title"><img src="{{url_for('static',filename='images/title.jpeg')}}" alt=""></h2>
+                    </div>
+                </div>
+                <div class="col-3 col-lg-9 flex justify-content-end align-items-center">
+                    <h3 class="text-success">基于知识图谱的医疗问答系统</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="question-main">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                   <form role="search" method="post" action="" class="flex justify-content-center align-items-center">
+                        <div class="input-group">
+                            <input type="text" name="key" class="search form-control clearable" placeholder="请输入问题">
+                            <button type="submit" class="btn btn-secondary">搜  索</button>
+                        </div>
+                   </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-main">
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-info">实体识别</div>
+                        <div class="card-body">
+                            {{answer['entry_rc']}}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header bg-info">实体关系</div>
+                        <div class="card-body">
+                            {{answer['entry_cn']}}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header bg-info">三元组</div>
+                        <div class="card-body">
+                            {{answer['entry_tr']}}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header bg-info">查询结果</div>
+                        <div class="card-body">
+                            {{answer['answer']}}
+                        </div>
+                        <div class="card-footer text-muted">用时：{{answer['time']}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="container" style="height: 100%"></div>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+        <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+        <script type="text/javascript">
+    $.ajax({
+        type:'GET',
+        url:"http://127.0.0.1:5000/tupu_data",
+        dataType:'json',
+        success:function(res){
+            console.log(res);
+            var dom = document.getElementById("container");
+            var myChart = echarts.init(dom);
+            var app = {};
+            var option;
+var size = 60;
+var size1 = 30;
+var yy = 200;
+var yy1 = 250;
+var listdata = [];
+var links = [];
+
+var infos = res[0]
+
+function setData(n, l) {
+    listdata.push({
+        x: l * 70,
+        y: size + l * 10,
+        "name": n,
+        "symbolSize": size,
+        "category": l,
+        "draggable": "true"
+    })
+}
+
+function setLinkData(s, d) {
+    links.push({
+        "source": s,
+        "target": d,
+        lineStyle: {
+            normal: {
+                color: 'source',
+            }
+        }
+    })
+}
+
+for (var i = 0; i < infos.length; i++) {
+    setData(infos[i], i)
+    setLinkData(infos[i], infos[i+1])
+}
+
+var legendes = ["实体", "关系", "实体/属性"];
+var texts = [];
+for (var i = 0; i < legendes.length; i++) {
+    texts.push({
+        "name": legendes[i],
+    })
+}
+
+option = {
+    toolbox: {
+        show: true,
+        feature: {
+            restore: {
+                show: true
+            },
+            saveAsImage: {
+                show: true
+            }
+        }
+    },
+    series: [{
+        name: '知识图谱',
+        type: 'graph',
+        layout: 'force',
+        force: {
+            repulsion: 60,
+            gravity: 0.1,
+            edgeLength: 15,
+            layoutAnimation: true,
+        },
+        data: listdata,
+        links: links,
+        categories: texts,
+        roam: false,
+        label: {
+            normal: {
+                show: true,
+                position: 'inside',
+                formatter: '{b}',
+                fontSize: 16,
+                fontStyle: '600',
+            }
+        },
+        lineStyle: {
+            normal: {
+                opacity: 0.9,
+                width: 1.5,
+                curveness: 0
+            }
+        }
+    }]
+};
+
+            if (option && typeof option === 'object') {
+                myChart.setOption(option, true);
+            }
+        }
+    });
+
+        </script>
+
+</body>
+
+</html>
