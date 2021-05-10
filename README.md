@@ -1,6 +1,6 @@
 # MedicalKQBA
-项目运行方式：
-1. 下载安装Neo4j,将用户名改为：neo4j,密码改为410221ABC.
-2. 运行build_medical_graph.py构建知识图谱.
-3. 运行web_server.py.
-注意：需先将data.zip文件解压到同一目录中，运行环境为Python3.7及以上版本，需要下载安装的python函数库有py2neo,ahocorasick.
+#Steps to run this project
+1. Download and install Neo4j, change the username as "neo4j", change the password as "410221ABC".
+2. run the file "build_medical_graph.py" to build the medical knowledge graph.
+3. run the file "web_server.py".
+Notes：Unzip the file "data.zip" to the same directory art first. The project interpreter is Python3.7 or more recent edition，the python libraries need to download and install are py2neo 4.2.0 and pyahocorasick 1.4.0 .
